@@ -8,3 +8,7 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Project architecture
+
+- Use Lovable Cloud as the source of truth for editable archive records, media metadata, inquiries, and administrator roles; bundled legacy photographs remain read-only fallbacks so the original field archive is never lost.
