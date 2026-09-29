@@ -10,33 +10,154 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ArchaeologicalRouteImport } from './routes/archaeological'
+import { Route as BookATourRouteImport } from './routes/book-a-tour'
+import { Route as CulturalRouteImport } from './routes/cultural'
+import { Route as FieldMapRouteImport } from './routes/field-map'
+import { Route as HistoricalRouteImport } from './routes/historical'
+import { Route as MissionRouteImport } from './routes/mission'
+import { Route as RecordingsRouteImport } from './routes/recordings'
+import { Route as ReligiousRouteImport } from './routes/religious'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArchaeologicalRoute = ArchaeologicalRouteImport.update({
+  id: '/archaeological',
+  path: '/archaeological',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookATourRoute = BookATourRouteImport.update({
+  id: '/book-a-tour',
+  path: '/book-a-tour',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CulturalRoute = CulturalRouteImport.update({
+  id: '/cultural',
+  path: '/cultural',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FieldMapRoute = FieldMapRouteImport.update({
+  id: '/field-map',
+  path: '/field-map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoricalRoute = HistoricalRouteImport.update({
+  id: '/historical',
+  path: '/historical',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MissionRoute = MissionRouteImport.update({
+  id: '/mission',
+  path: '/mission',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecordingsRoute = RecordingsRouteImport.update({
+  id: '/recordings',
+  path: '/recordings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReligiousRoute = ReligiousRouteImport.update({
+  id: '/religious',
+  path: '/religious',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/archaeological': typeof ArchaeologicalRoute
+  '/book-a-tour': typeof BookATourRoute
+  '/cultural': typeof CulturalRoute
+  '/field-map': typeof FieldMapRoute
+  '/historical': typeof HistoricalRoute
+  '/mission': typeof MissionRoute
+  '/recordings': typeof RecordingsRoute
+  '/religious': typeof ReligiousRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/archaeological': typeof ArchaeologicalRoute
+  '/book-a-tour': typeof BookATourRoute
+  '/cultural': typeof CulturalRoute
+  '/field-map': typeof FieldMapRoute
+  '/historical': typeof HistoricalRoute
+  '/mission': typeof MissionRoute
+  '/recordings': typeof RecordingsRoute
+  '/religious': typeof ReligiousRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/archaeological': typeof ArchaeologicalRoute
+  '/book-a-tour': typeof BookATourRoute
+  '/cultural': typeof CulturalRoute
+  '/field-map': typeof FieldMapRoute
+  '/historical': typeof HistoricalRoute
+  '/mission': typeof MissionRoute
+  '/recordings': typeof RecordingsRoute
+  '/religious': typeof ReligiousRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/archaeological'
+    | '/book-a-tour'
+    | '/cultural'
+    | '/field-map'
+    | '/historical'
+    | '/mission'
+    | '/recordings'
+    | '/religious'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/archaeological'
+    | '/book-a-tour'
+    | '/cultural'
+    | '/field-map'
+    | '/historical'
+    | '/mission'
+    | '/recordings'
+    | '/religious'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/archaeological'
+    | '/book-a-tour'
+    | '/cultural'
+    | '/field-map'
+    | '/historical'
+    | '/mission'
+    | '/recordings'
+    | '/religious'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  ArchaeologicalRoute: typeof ArchaeologicalRoute
+  BookATourRoute: typeof BookATourRoute
+  CulturalRoute: typeof CulturalRoute
+  FieldMapRoute: typeof FieldMapRoute
+  HistoricalRoute: typeof HistoricalRoute
+  MissionRoute: typeof MissionRoute
+  RecordingsRoute: typeof RecordingsRoute
+  ReligiousRoute: typeof ReligiousRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +169,83 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/archaeological': {
+      id: '/archaeological'
+      path: '/archaeological'
+      fullPath: '/archaeological'
+      preLoaderRoute: typeof ArchaeologicalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book-a-tour': {
+      id: '/book-a-tour'
+      path: '/book-a-tour'
+      fullPath: '/book-a-tour'
+      preLoaderRoute: typeof BookATourRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cultural': {
+      id: '/cultural'
+      path: '/cultural'
+      fullPath: '/cultural'
+      preLoaderRoute: typeof CulturalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/field-map': {
+      id: '/field-map'
+      path: '/field-map'
+      fullPath: '/field-map'
+      preLoaderRoute: typeof FieldMapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/historical': {
+      id: '/historical'
+      path: '/historical'
+      fullPath: '/historical'
+      preLoaderRoute: typeof HistoricalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mission': {
+      id: '/mission'
+      path: '/mission'
+      fullPath: '/mission'
+      preLoaderRoute: typeof MissionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recordings': {
+      id: '/recordings'
+      path: '/recordings'
+      fullPath: '/recordings'
+      preLoaderRoute: typeof RecordingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/religious': {
+      id: '/religious'
+      path: '/religious'
+      fullPath: '/religious'
+      preLoaderRoute: typeof ReligiousRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  ArchaeologicalRoute: ArchaeologicalRoute,
+  BookATourRoute: BookATourRoute,
+  CulturalRoute: CulturalRoute,
+  FieldMapRoute: FieldMapRoute,
+  HistoricalRoute: HistoricalRoute,
+  MissionRoute: MissionRoute,
+  RecordingsRoute: RecordingsRoute,
+  ReligiousRoute: ReligiousRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
