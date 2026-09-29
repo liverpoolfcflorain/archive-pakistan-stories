@@ -33,9 +33,10 @@ export function ArchiveShell({ children }: { children: ReactNode }) {
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setOpen((v) => !v)} aria-label="Open archive navigation">{open ? <X /> : <Menu />}</Button>
           <nav className="hidden flex-wrap items-center justify-end gap-1 md:flex">
             {tabs.map(([label, to]) => <Link key={to} to={to} className="rounded-full px-3 py-2 text-xs text-ink/65 transition-colors hover:bg-ink/5" activeProps={{ className: "rounded-full bg-primary px-3 py-2 text-xs text-primary-foreground" }}>{label}</Link>)}
+            <Link to="/admin" className="rounded-full border border-ink/15 px-3 py-2 text-xs text-ink/65">Admin</Link>
           </nav>
         </div>
-        {open && <nav className="grid grid-cols-2 gap-1 border-t border-ink/10 p-3 md:hidden">{tabs.map(([label, to]) => <Link key={to} to={to} className="rounded-lg px-3 py-2 text-sm" onClick={() => setOpen(false)} activeProps={{ className: "rounded-lg bg-primary px-3 py-2 text-sm text-primary-foreground" }}>{label}</Link>)}</nav>}
+        {open && <nav className="grid grid-cols-2 gap-1 border-t border-ink/10 p-3 md:hidden">{tabs.map(([label, to]) => <Link key={to} to={to} className="rounded-lg px-3 py-2 text-sm" onClick={() => setOpen(false)} activeProps={{ className: "rounded-lg bg-primary px-3 py-2 text-sm text-primary-foreground" }}>{label}</Link>)}<Link to="/admin" className="rounded-lg px-3 py-2 text-sm" onClick={() => setOpen(false)}>Admin</Link></nav>}
       </header>
       {children}
       <footer className="mx-4 my-8 flex flex-wrap items-center justify-between gap-3 border-t border-ink/10 pt-5 text-[11px] text-ink/50"><span>© Yemberzal Field Archive · Crowd-funded historiography</span><span>A structure survives its congregation. Whether it survives forgetting is still being decided.</span></footer>
