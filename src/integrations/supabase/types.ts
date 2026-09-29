@@ -14,16 +14,229 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      archive_sections: {
+        Row: {
+          body: string
+          eyebrow: string
+          id: string
+          published: boolean
+          section_key: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          eyebrow?: string
+          id?: string
+          published?: boolean
+          section_key: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          eyebrow?: string
+          id?: string
+          published?: boolean
+          section_key?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      heritage_sites: {
+        Row: {
+          archaeological_significance: string
+          created_at: string
+          cultural_significance: string
+          description: string
+          historical_significance: string
+          id: string
+          location: string
+          map_x: number
+          map_y: number
+          period: string
+          published: boolean
+          register_number: number
+          religious_significance: string
+          site_type: string
+          slug: string
+          summary: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          archaeological_significance?: string
+          created_at?: string
+          cultural_significance?: string
+          description?: string
+          historical_significance?: string
+          id?: string
+          location?: string
+          map_x?: number
+          map_y?: number
+          period?: string
+          published?: boolean
+          register_number: number
+          religious_significance?: string
+          site_type?: string
+          slug: string
+          summary?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          archaeological_significance?: string
+          created_at?: string
+          cultural_significance?: string
+          description?: string
+          historical_significance?: string
+          id?: string
+          location?: string
+          map_x?: number
+          map_y?: number
+          period?: string
+          published?: boolean
+          register_number?: number
+          religious_significance?: string
+          site_type?: string
+          slug?: string
+          summary?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      inquiries: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          kind: Database["public"]["Enums"]["inquiry_kind"]
+          message: string
+          name: string
+          phone: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          kind?: Database["public"]["Enums"]["inquiry_kind"]
+          message: string
+          name: string
+          phone?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["inquiry_kind"]
+          message?: string
+          name?: string
+          phone?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      media_items: {
+        Row: {
+          alt_text: string
+          created_at: string
+          credit: string
+          duration_seconds: number | null
+          file_path: string
+          id: string
+          kind: Database["public"]["Enums"]["media_kind"]
+          language: string
+          published: boolean
+          site_id: string | null
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          alt_text?: string
+          created_at?: string
+          credit?: string
+          duration_seconds?: number | null
+          file_path: string
+          id?: string
+          kind: Database["public"]["Enums"]["media_kind"]
+          language?: string
+          published?: boolean
+          site_id?: string | null
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          alt_text?: string
+          created_at?: string
+          credit?: string
+          duration_seconds?: number | null
+          file_path?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["media_kind"]
+          language?: string
+          published?: boolean
+          site_id?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_items_site_id_fkey"
+            columns: ["site_id"]
+            isOneToOne: false
+            referencedRelation: "heritage_sites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "editor"
+      inquiry_kind: "tour" | "tourism" | "contribution" | "general"
+      media_kind: "image" | "audio" | "video"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +363,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "editor"],
+      inquiry_kind: ["tour", "tourism", "contribution", "general"],
+      media_kind: ["image", "audio", "video"],
+    },
   },
 } as const
