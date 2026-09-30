@@ -46,7 +46,8 @@ function useArchive() {
 function Hero({concept,media}:{concept:ArchiveSection;media:MediaItem[]}) {
   const intro=media.find(m=>m.kind==="video"&&!m.site_id);
   return <section className="archive-rise relative mx-3 mt-4 min-h-[72svh] overflow-hidden rounded-3xl border border-card/80 shadow-archive md:mx-4">
-    <video className="absolute inset-0 size-full object-cover" src={intro?.signedUrl??homeFilm.url} autoPlay muted loop playsInline aria-hidden="true" />
+    <img className="absolute inset-0 size-full object-cover" src={archiveAssets["gulshan-e-shauda"]} alt="Gurdwara Gulshan-e-Shauda in Rawalakot" />
+    <video className="absolute inset-0 size-full object-cover" src={intro?.signedUrl??homeFilm.url} poster={archiveAssets["gulshan-e-shauda"]} autoPlay muted loop playsInline preload="auto" aria-hidden="true" />
     <div className="absolute inset-0 bg-ink/65" />
     <div className="relative flex min-h-[72svh] max-w-4xl flex-col justify-end p-7 text-primary-foreground md:p-14">
       <p className="mb-5 text-[11px] uppercase text-primary-foreground/75">Yemberzal · یَمبرزل · Rawalakot</p>

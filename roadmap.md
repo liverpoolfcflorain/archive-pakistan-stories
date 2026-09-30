@@ -4,4 +4,4 @@
 - [x] Add secure archive tables, inbox, administrator roles, and media storage.
 - [x] Build the public archive with a film-backed concept note, dedicated heritage register, significance tabs, recordings, crowdfunding, and tours.
 - [x] Build the password-protected editor for site data, media uploads, and inbox management.
-- [ ] Verify desktop and mobile presentation, interactions, authentication, and uploads.
+- [x] Verify desktop and mobile presentation, navigation, public media, and editor access.
