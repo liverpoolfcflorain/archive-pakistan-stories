@@ -6,7 +6,7 @@ import { archiveAssets } from "@/lib/archive-assets";
 
 const tabs = [
   ["Concept note", "/"],
-  ["Field map", "/field-map"],
+  ["Heritage sites", "/field-map"],
   ["Archaeological", "/archaeological"],
   ["Cultural", "/cultural"],
   ["Religious", "/religious"],
