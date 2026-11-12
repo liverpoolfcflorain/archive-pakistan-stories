@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import type { MediaItem } from "@/lib/archive.types";
 
 export const getPublishedMedia = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -25,7 +24,5 @@ export const getPublishedMedia = createServerFn({ method: "GET" }).handler(async
     }),
   );
 
-  return signedItems.filter(
-    (item): item is MediaItem & { signedUrl: string } => item !== null,
-  );
+  return signedItems.filter((item) => item !== null);
 });
