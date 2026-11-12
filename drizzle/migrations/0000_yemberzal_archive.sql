@@ -4,7 +4,7 @@ CREATE TYPE public.inquiry_kind AS ENUM ('tour', 'tourism', 'contribution', 'gen
 
 CREATE TABLE public.user_roles (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL,
+  user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   role public.app_role NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
   UNIQUE (user_id, role)
@@ -14,27 +14,30 @@ GRANT ALL ON public.user_roles TO service_role;
 ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
 
 CREATE OR REPLACE FUNCTION public.has_role(_user_id uuid, _role public.app_role)
-RETURNS boolean
-LANGUAGE sql
-STABLE
-SECURITY DEFINER
-SET search_path = public
-AS $$
-  SELECT EXISTS (
-    SELECT 1 FROM public.user_roles
-    WHERE user_id = _user_id AND role = _role
-  )
-$$;
-GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated;
-GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO service_role;
+RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public
+AS $$ SELECT EXISTS (SELECT 1 FROM public.user_roles WHERE user_id = _user_id AND role = _role) $$;
+REVOKE ALL ON FUNCTION public.has_role(uuid, public.app_role) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated, service_role;
 
-CREATE POLICY "Users can read their own role"
-ON public.user_roles FOR SELECT TO authenticated
+CREATE POLICY "Users can read their own role" ON public.user_roles FOR SELECT TO authenticated
 USING (user_id = auth.uid());
-CREATE POLICY "Admins can manage roles"
-ON public.user_roles FOR ALL TO authenticated
-USING (public.has_role(auth.uid(), 'admin'))
-WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins can manage roles" ON public.user_roles FOR ALL TO authenticated
+USING (public.has_role(auth.uid(), 'admin')) WITH CHECK (public.has_role(auth.uid(), 'admin'));
+
+-- The first signed-in, email-confirmed account becomes the archive admin; afterwards this does nothing.
+CREATE OR REPLACE FUNCTION public.claim_first_admin()
+RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+AS $$
+BEGIN
+  IF auth.uid() IS NULL THEN RETURN false; END IF;
+  PERFORM pg_advisory_xact_lock(hashtext('claim_first_admin'));
+  IF EXISTS (SELECT 1 FROM public.user_roles) THEN RETURN false; END IF;
+  INSERT INTO public.user_roles (user_id, role) VALUES (auth.uid(), 'admin');
+  RETURN true;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.claim_first_admin() FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.claim_first_admin() TO authenticated;
 
 CREATE TABLE public.heritage_sites (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -60,13 +63,10 @@ GRANT SELECT ON public.heritage_sites TO anon, authenticated;
 GRANT INSERT, UPDATE, DELETE ON public.heritage_sites TO authenticated;
 GRANT ALL ON public.heritage_sites TO service_role;
 ALTER TABLE public.heritage_sites ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Published sites are public"
-ON public.heritage_sites FOR SELECT TO anon, authenticated
+CREATE POLICY "Published sites are public" ON public.heritage_sites FOR SELECT TO anon, authenticated
 USING (published OR public.has_role(auth.uid(), 'admin'));
-CREATE POLICY "Admins manage sites"
-ON public.heritage_sites FOR ALL TO authenticated
-USING (public.has_role(auth.uid(), 'admin'))
-WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins manage sites" ON public.heritage_sites FOR ALL TO authenticated
+USING (public.has_role(auth.uid(), 'admin')) WITH CHECK (public.has_role(auth.uid(), 'admin'));
 
 CREATE TABLE public.media_items (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -87,13 +87,10 @@ GRANT SELECT ON public.media_items TO anon, authenticated;
 GRANT INSERT, UPDATE, DELETE ON public.media_items TO authenticated;
 GRANT ALL ON public.media_items TO service_role;
 ALTER TABLE public.media_items ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Published media records are public"
-ON public.media_items FOR SELECT TO anon, authenticated
+CREATE POLICY "Published media records are public" ON public.media_items FOR SELECT TO anon, authenticated
 USING (published OR public.has_role(auth.uid(), 'admin'));
-CREATE POLICY "Admins manage media records"
-ON public.media_items FOR ALL TO authenticated
-USING (public.has_role(auth.uid(), 'admin'))
-WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins manage media records" ON public.media_items FOR ALL TO authenticated
+USING (public.has_role(auth.uid(), 'admin')) WITH CHECK (public.has_role(auth.uid(), 'admin'));
 
 CREATE TABLE public.archive_sections (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -108,13 +105,10 @@ GRANT SELECT ON public.archive_sections TO anon, authenticated;
 GRANT INSERT, UPDATE, DELETE ON public.archive_sections TO authenticated;
 GRANT ALL ON public.archive_sections TO service_role;
 ALTER TABLE public.archive_sections ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Published sections are public"
-ON public.archive_sections FOR SELECT TO anon, authenticated
+CREATE POLICY "Published sections are public" ON public.archive_sections FOR SELECT TO anon, authenticated
 USING (published OR public.has_role(auth.uid(), 'admin'));
-CREATE POLICY "Admins manage sections"
-ON public.archive_sections FOR ALL TO authenticated
-USING (public.has_role(auth.uid(), 'admin'))
-WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins manage sections" ON public.archive_sections FOR ALL TO authenticated
+USING (public.has_role(auth.uid(), 'admin')) WITH CHECK (public.has_role(auth.uid(), 'admin'));
 
 CREATE TABLE public.inquiries (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -131,18 +125,13 @@ GRANT INSERT ON public.inquiries TO anon, authenticated;
 GRANT SELECT, UPDATE, DELETE ON public.inquiries TO authenticated;
 GRANT ALL ON public.inquiries TO service_role;
 ALTER TABLE public.inquiries ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Anyone can send an inquiry"
-ON public.inquiries FOR INSERT TO anon, authenticated
-WITH CHECK (length(name) BETWEEN 1 AND 120 AND length(email) BETWEEN 3 AND 320 AND length(message) BETWEEN 1 AND 5000);
-CREATE POLICY "Admins manage inquiries"
-ON public.inquiries FOR SELECT TO authenticated
+CREATE POLICY "Anyone can send an inquiry" ON public.inquiries FOR INSERT TO anon, authenticated
+WITH CHECK (status = 'new' AND length(name) BETWEEN 1 AND 120 AND length(email) BETWEEN 3 AND 320 AND length(phone) <= 60 AND length(message) BETWEEN 1 AND 5000);
+CREATE POLICY "Admins read inquiries" ON public.inquiries FOR SELECT TO authenticated
 USING (public.has_role(auth.uid(), 'admin'));
-CREATE POLICY "Admins update inquiries"
-ON public.inquiries FOR UPDATE TO authenticated
-USING (public.has_role(auth.uid(), 'admin'))
-WITH CHECK (public.has_role(auth.uid(), 'admin'));
-CREATE POLICY "Admins delete inquiries"
-ON public.inquiries FOR DELETE TO authenticated
+CREATE POLICY "Admins update inquiries" ON public.inquiries FOR UPDATE TO authenticated
+USING (public.has_role(auth.uid(), 'admin')) WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins delete inquiries" ON public.inquiries FOR DELETE TO authenticated
 USING (public.has_role(auth.uid(), 'admin'));
 
 CREATE OR REPLACE FUNCTION public.set_updated_at()
@@ -153,6 +142,22 @@ CREATE TRIGGER heritage_sites_updated_at BEFORE UPDATE ON public.heritage_sites 
 CREATE TRIGGER media_items_updated_at BEFORE UPDATE ON public.media_items FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 CREATE TRIGGER archive_sections_updated_at BEFORE UPDATE ON public.archive_sections FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 CREATE TRIGGER inquiries_updated_at BEFORE UPDATE ON public.inquiries FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+
+-- Media files: private bucket. Visitors may read only files attached to a published media record;
+-- admins manage everything. This lets the site sign public file links with the publishable key alone.
+CREATE POLICY "Visitors read published heritage media" ON storage.objects FOR SELECT TO anon, authenticated
+USING (bucket_id = 'heritage-media' AND EXISTS (
+  SELECT 1 FROM public.media_items m WHERE m.file_path = storage.objects.name AND m.published
+));
+CREATE POLICY "Admins read heritage media" ON storage.objects FOR SELECT TO authenticated
+USING (bucket_id = 'heritage-media' AND public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins upload heritage media" ON storage.objects FOR INSERT TO authenticated
+WITH CHECK (bucket_id = 'heritage-media' AND public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins update heritage media" ON storage.objects FOR UPDATE TO authenticated
+USING (bucket_id = 'heritage-media' AND public.has_role(auth.uid(), 'admin'))
+WITH CHECK (bucket_id = 'heritage-media' AND public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins delete heritage media" ON storage.objects FOR DELETE TO authenticated
+USING (bucket_id = 'heritage-media' AND public.has_role(auth.uid(), 'admin'));
 
 INSERT INTO public.heritage_sites (register_number, slug, title, location, site_type, period, summary, description, map_x, map_y) VALUES
 (1, 'gulshan-e-shauda', 'Gurdwara Gulshan-e-Shauda', 'Rawalakot, Poonch District', 'Gurdwara / Samadhi', 'Sikh era', 'One of Rawalakot’s most important surviving Sikh-period buildings.', 'One of two Sikh-era buildings forming the core of Nimra Tariq’s 2024 study of Rawalakot’s Sikh heritage. Its masonry combines construction typical of Sikh-period hill shrines with features read as closer to a samadhi. Local oral tradition still attaches legends to the building. Today it stands unroofed and unmaintained.', 48, 39),

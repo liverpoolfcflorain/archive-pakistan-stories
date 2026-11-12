@@ -1,26 +1,18 @@
-import emblem from "@/assets/archive/emblem.png.asset.json";
-import fieldMap from "@/assets/archive/field-map.jpg.asset.json";
-import gulshan from "@/assets/archive/gulshan-e-shauda.jpg.asset.json";
-import draid from "@/assets/archive/gurdwara-sahib-draid.jpg.asset.json";
-import koiyan from "@/assets/archive/upper-koiyan.jpg.asset.json";
-import poonch from "@/assets/archive/poonch-fort.jpg.asset.json";
-import baral from "@/assets/archive/baral-fort.jpg.asset.json";
-import kachayi from "@/assets/archive/kotli-kachayi.jpg.asset.json";
-import seri from "@/assets/archive/seri-temple.jpg.asset.json";
-import ranbir from "@/assets/archive/ranbir-singh-baradari.jpg.asset.json";
-import chatti from "@/assets/archive/chatti-badshahi.jpg.asset.json";
+// Archive photographs and the opening film ship inside the site (public/), so any host serves them.
+const img = (file: string) => `/images/${file}`;
 
 export const archiveAssets = {
-  emblem: emblem.url,
-  fieldMap: fieldMap.url,
-  "gulshan-e-shauda": gulshan.url,
-  "gurdwara-sahib-draid": draid.url,
-  "upper-koiyan-baoli": koiyan.url,
-  "sikh-structures-poonch": gulshan.url,
-  "old-poonch": poonch.url,
-  "baral-fort": baral.url,
-  "kotli-kachayi-fort": kachayi.url,
-  "seri-temple": seri.url,
-  "ranbir-singh-baradari": ranbir.url,
-  "gurdwara-chatti-badshahi": chatti.url,
+  emblem: img("emblem.png"),
+  fieldMap: img("field-map.jpg"),
+  homeFilm: "/media/yemberzal-home-film.mp4",
+  "gulshan-e-shauda": img("gulshan-e-shauda.jpg"),
+  "gurdwara-sahib-draid": img("gurdwara-sahib-draid.jpg"),
+  "upper-koiyan-baoli": img("upper-koiyan.jpg"),
+  "sikh-structures-poonch": img("gulshan-e-shauda.jpg"),
+  "old-poonch": img("poonch-fort.jpg"),
+  "baral-fort": img("baral-fort.jpg"),
+  "kotli-kachayi-fort": img("kotli-kachayi.jpg"),
+  "seri-temple": img("seri-temple.jpg"),
+  "ranbir-singh-baradari": img("ranbir-singh-baradari.jpg"),
+  "gurdwara-chatti-badshahi": img("chatti-badshahi.jpg"),
 } as const;

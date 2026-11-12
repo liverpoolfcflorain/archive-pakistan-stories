@@ -1,0 +1,93 @@
+[
+  {
+    "capability": "code",
+    "source": "archive-pakistan-stories (Lovable TanStack app, ZIP)",
+    "outcome": "migrate",
+    "status": "verified",
+    "next_action": "None"
+  },
+  {
+    "capability": "routes",
+    "source": "/, /field-map, /archaeological, /cultural, /religious, /historical, /mission, /recordings, /book-a-tour, /admin",
+    "outcome": "migrate",
+    "status": "verified",
+    "next_action": "None"
+  },
+  {
+    "capability": "assets",
+    "source": "16 project-hosted asset pointers (old project's domain only)",
+    "outcome": "downloaded from the live site into public/images and public/media (film re-encoded 720p, 6 MB)",
+    "status": "done",
+    "next_action": "None"
+  },
+  {
+    "capability": "schema",
+    "source": "supabase/migrations (heritage_sites, archive_sections, media_items, inquiries, user_roles)",
+    "outcome": "migrate to Lovable Cloud",
+    "status": "done",
+    "next_action": "None"
+  },
+  {
+    "capability": "records",
+    "source": "seed rows for 10 sites and 6 page texts",
+    "outcome": "seeded from source migration",
+    "status": "done",
+    "next_action": "Edits made later in the old live site, inbox messages and uploaded recordings need an export from the old project"
+  },
+  {
+    "capability": "auth identities",
+    "source": "old project's admin account(s)",
+    "outcome": "migrate",
+    "status": "pending",
+    "next_action": "First person to create an editor account on /admin becomes admin; no users exported"
+  },
+  {
+    "capability": "authorization",
+    "source": "user_roles + has_role RLS, first-admin claim",
+    "outcome": "migrate (claim moved to a database function, no service key)",
+    "status": "partly verified",
+    "next_action": "Visitors blocked from inbox/edits/admin claim; signed-in editor flow awaits the owner's first sign-up"
+  },
+  {
+    "capability": "uploaded file bytes",
+    "source": "heritage-media bucket in old project",
+    "outcome": "bucket recreated (private)",
+    "status": "pending",
+    "next_action": "Re-upload recordings/films via /admin or provide files"
+  },
+  {
+    "capability": "public media links",
+    "source": "server function signing with service-role key",
+    "outcome": "replaced with browser signing under a published-only storage policy",
+    "status": "pending",
+    "next_action": "Verify after the first upload from /admin"
+  },
+  {
+    "capability": "tour inbox",
+    "source": "inquiries table, anon insert",
+    "outcome": "migrate",
+    "status": "verified",
+    "next_action": "None (test messages removed)"
+  },
+  {
+    "capability": "secrets",
+    "source": "old .env (publishable values only), service-role usage",
+    "outcome": "no secret keys required; only public connection values in .env",
+    "status": "done",
+    "next_action": "None"
+  },
+  {
+    "capability": "external providers",
+    "source": "Google Fonts",
+    "outcome": "kept",
+    "status": "done",
+    "next_action": "None"
+  },
+  {
+    "capability": "schedules, webhooks, payments, email, AI",
+    "source": "none",
+    "outcome": "not_applicable",
+    "status": "verified",
+    "next_action": "None"
+  }
+]

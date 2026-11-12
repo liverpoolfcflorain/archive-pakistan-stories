@@ -7,9 +7,30 @@
 >
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
+
+## What Lovable manages
+
+Rules outside this block are the project's own. Change the pieces below in
+Lovable, not by hand. With the [Lovable MCP](https://mcp.lovable.dev)
+connected, `send_message` asks Lovable to do it; otherwise ask the user to
+use the editor.
+
+- **Database.** Do not add or edit `supabase/migrations/` or `drizzle/`.
+  Ask Lovable to change the schema.
+- **Generated files.** Do not edit a file whose header says it is automatically
+  generated.
+- **AI gateway.** Keep model calls on Lovable's gateway, and keep
+  `LOVABLE_API_KEY` out of browser code.
+- **Connectors.** Lovable provides native connectors. `list_connectors` shows
+  which are enabled; `add_connector` only returns the dashboard link. When a
+  connector is enabled, calls go through the connector gateway and need
+  `LOVABLE_API_KEY`. When Lovable does not provide one, users can bring their
+  own key and store it in Secrets.
+- **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
 
 ## Project architecture
 
-- Use Lovable Cloud as the source of truth for editable archive records, media metadata, inquiries, and administrator roles; bundled legacy photographs remain read-only fallbacks so the original field archive is never lost.
-- Serve published private-bucket media through a public server function that signs only rows marked published; keep storage object reads admin-only.
+- Lovable Cloud is the source of truth for archive sites, page text, media records, tour inquiries and admin roles; bundled photographs and site text in code are read-only fallbacks so pages render even before data loads.
+- The app must run on any host with only the public connection values: no server function or page may depend on the service-role key. Privileged steps (first-admin claim) are SECURITY DEFINER database functions; visitors sign media links in the browser under a storage policy that only exposes files attached to published media records.
+- Archive photographs and the opening film live in `public/images` and `public/media` (not project asset pointers) so external hosts serve them; keep each file under 10 MB.
