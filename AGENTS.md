@@ -12,3 +12,4 @@
 ## Project architecture
 
 - Use Lovable Cloud as the source of truth for editable archive records, media metadata, inquiries, and administrator roles; bundled legacy photographs remain read-only fallbacks so the original field archive is never lost.
+- Serve published private-bucket media through a public server function that signs only rows marked published; keep storage object reads admin-only.

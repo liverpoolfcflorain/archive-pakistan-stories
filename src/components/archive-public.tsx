@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { archiveAssets } from "@/lib/archive-assets";
 import homeFilm from "@/assets/archive/yemberzal-home-film.mp4.asset.json";
 import type { ArchiveSection, HeritageSite, MediaItem } from "@/lib/archive.types";
+import { getPublishedMedia } from "@/lib/media.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { ArchiveShell } from "./archive-shell";
 
@@ -35,10 +36,10 @@ const fallbackSections: Record<string, ArchiveSection> = {
 function useArchive() {
   const [sites,setSites]=useState(fallbackSites); const [sections,setSections]=useState(fallbackSections); const [media,setMedia]=useState<MediaItem[]>([]);
   useEffect(()=>{ void (async()=>{
-    const [s,c,m]=await Promise.all([supabase.from("heritage_sites").select("*").order("register_number"),supabase.from("archive_sections").select("*"),supabase.from("media_items").select("*").order("sort_order")]);
+    const [s,c,m]=await Promise.all([supabase.from("heritage_sites").select("*").order("register_number"),supabase.from("archive_sections").select("*"),getPublishedMedia()]);
     if(s.data?.length) setSites(s.data as HeritageSite[]);
     if(c.data?.length) setSections(Object.fromEntries((c.data as ArchiveSection[]).map(v=>[v.section_key,v])));
-    if(m.data?.length){ const withUrls=await Promise.all((m.data as MediaItem[]).map(async v=>{const {data}=await supabase.storage.from("heritage-media").createSignedUrl(v.file_path,3600);return data?.signedUrl?{...v,signedUrl:data.signedUrl}:v;})); setMedia(withUrls); }
+    if(m.length) setMedia(m);
   })();},[]);
   return {sites,sections,media};
 }
